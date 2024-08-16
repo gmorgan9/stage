@@ -5,6 +5,8 @@ import random
 import string
 from dotenv import load_dotenv
 
+load_dotenv()  # Load environment variables
+
 app = Flask(__name__)
 
 db = MySQLdb.connect(
