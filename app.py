@@ -7,11 +7,10 @@ from dotenv import load_dotenv
 
 app = Flask(__name__)
 
-# Database connection
 db = MySQLdb.connect(
     host=os.getenv('DB_HOST'),
     user=os.getenv('DB_USER'),
-    password=os.getenv('DB_PASS'),
+    passwd=os.getenv('DB_PASS'), 
     db=os.getenv('DB_NAME'),
 )
 
