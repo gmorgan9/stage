@@ -89,4 +89,4 @@ def view_students():
     return jsonify(student_list), 200
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='100.115.191.29', port=5000, debug=True)
