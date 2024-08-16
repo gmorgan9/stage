@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import MySQLdb
 import random
 import string
@@ -36,33 +36,25 @@ def create_username(first_name, last_name):
     count = cursor.fetchone()[0]
     return f"{base_username}{str(count).zfill(3)}"
 
+@app.route('/add_students_form', methods=['GET'])
+def add_students_form():
+    return render_template('add_students_form.html')
+
 @app.route('/add_students', methods=['POST'])
 def add_students():
-    data = request.json
-    students = data.get('students')
+    num_students = int(request.form.get('num_students'))
+    students = []
 
-    if not students or not isinstance(students, list):
-        return jsonify({"error": "Invalid input"}), 400
-
-    added_students = []
-
-    for student in students:
-        first_name = student.get('first_name')
-        last_name = student.get('last_name')
-        grade = student.get('grade')
-
-        if not first_name or not last_name or not grade:
-            continue
+    # Generate the student entries
+    for _ in range(num_students):
+        first_name = request.form.get('first_name')
+        last_name = request.form.get('last_name')
+        grade = request.form.get('grade')
 
         username = create_username(first_name, last_name)
         password = generate_password()
 
-        query = """INSERT INTO students (first_name, last_name, username, password, grade)
-                   VALUES (%s, %s, %s, %s, %s)"""
-        cursor.execute(query, (first_name, last_name, username, password, grade))
-        db.commit()
-
-        added_students.append({
+        students.append({
             "first_name": first_name,
             "last_name": last_name,
             "username": username,
@@ -70,7 +62,14 @@ def add_students():
             "grade": grade
         })
 
-    return jsonify({"added_students": added_students}), 201
+    # Insert students into the database
+    for student in students:
+        query = """INSERT INTO students (first_name, last_name, username, password, grade)
+                   VALUES (%s, %s, %s, %s, %s)"""
+        cursor.execute(query, (student['first_name'], student['last_name'], student['username'], student['password'], student['grade']))
+        db.commit()
+
+    return render_template('student_list.html', students=students)
 
 @app.route('/view_students', methods=['GET'])
 def view_students():
