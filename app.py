@@ -26,7 +26,15 @@ def generate_password():
     numbers = ''.join(random.choices(string.digits, k=3))
     lowercase = ''.join(random.choices(string.ascii_lowercase, k=4))
     special = random.choice(special_characters)
-    return lowercase + numbers + special
+
+    # Combine all parts into a list
+    password_parts = list(lowercase + numbers + special)
+    
+    # Shuffle the list to randomize the order
+    random.shuffle(password_parts)
+    
+    # Join the shuffled parts into a single string
+    return ''.join(password_parts)
 
 # Create username
 def create_username(first_name, last_name):
