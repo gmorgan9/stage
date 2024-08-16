@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Details</title>
+</head>
+<body>
+    <h1>Enter Student Details</h1>
+    <form action="/add_students" method="POST">
+        <input type="hidden" name="num_students" value="{{ num_students }}">
+        <input type="hidden" name="grade" value="{{ grade }}">
+
+        {% for i in range(num_students) %}
+            <h3>Student {{ i + 1 }}</h3>
+            <label for="first_name_{{ i }}">First Name:</label>
+            <input type="text" id="first_name_{{ i }}" name="first_name_{{ i }}" required>
+            <br><br>
+            <label for="last_name_{{ i }}">Last Name:</label>
+            <input type="text" id="last_name_{{ i }}" name="last_name_{{ i }}" required>
+            <br><br>
+        {% endfor %}
+
+        <input type="submit" value="Add Students">
+    </form>
+</body>
+</html>

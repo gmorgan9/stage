@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, render_template, redirect, url_for
 import MySQLdb
 import random
 import string
@@ -40,27 +40,34 @@ def create_username(first_name, last_name):
 def add_students_form():
     return render_template('add_students_form.html')
 
+@app.route('/student_details_form', methods=['POST'])
+def student_details_form():
+    num_students = int(request.form.get('num_students'))
+    grade = request.form.get('grade')
+    return render_template('student_details_form.html', num_students=num_students, grade=grade)
+
 @app.route('/add_students', methods=['POST'])
 def add_students():
     num_students = int(request.form.get('num_students'))
+    grade = request.form.get('grade')
+    
     students = []
+    
+    for i in range(num_students):
+        first_name = request.form.get(f'first_name_{i}')
+        last_name = request.form.get(f'last_name_{i}')
+        
+        if first_name and last_name:
+            username = create_username(first_name, last_name)
+            password = generate_password()
 
-    # Generate the student entries
-    for _ in range(num_students):
-        first_name = request.form.get('first_name')
-        last_name = request.form.get('last_name')
-        grade = request.form.get('grade')
-
-        username = create_username(first_name, last_name)
-        password = generate_password()
-
-        students.append({
-            "first_name": first_name,
-            "last_name": last_name,
-            "username": username,
-            "password": password,
-            "grade": grade
-        })
+            students.append({
+                "first_name": first_name,
+                "last_name": last_name,
+                "username": username,
+                "password": password,
+                "grade": grade
+            })
 
     # Insert students into the database
     for student in students:
