@@ -5,15 +5,17 @@ import random
 import string
 from dotenv import load_dotenv
 
-load_dotenv()  # Load environment variables
-
 app = Flask(__name__)
 
+# Load environment variables from .env file
+load_dotenv()
+
+# Database connection
 db = MySQLdb.connect(
     host=os.getenv('DB_HOST'),
     user=os.getenv('DB_USER'),
-    passwd=os.getenv('DB_PASS'), 
-    db=os.getenv('DB_NAME'),
+    passwd=os.getenv('DB_PASS'),
+    db=os.getenv('DB_NAME')
 )
 
 cursor = db.cursor()
@@ -89,4 +91,5 @@ def view_students():
     return jsonify(student_list), 200
 
 if __name__ == '__main__':
-    app.run(host='100.115.191.29', port=5000, debug=True)
+    # Use SSL context with certificates in the same directory as app.py
+    app.run(host='0.0.0.0', port=5000, debug=True, ssl_context=('cert.pem', 'key.pem'))
